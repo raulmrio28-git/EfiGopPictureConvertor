@@ -51,9 +51,14 @@ char m_szFileName[513];
 
 bool InitIniReader(char* szFileName)
 {
+	int currChar = 0;
 	if (!szFileName) return false;
-	memset(m_szFileName, 0x00, 512);
-	memcpy(m_szFileName, szFileName, strlen(szFileName));
+	memset(m_szFileName, 0x00, 513);
+	while (szFileName[currChar] != 0 && currChar <= 512)
+	{
+		m_szFileName[currChar] = szFileName[currChar];
+		currChar++;
+	}
 	return true;
 }
 bool CheckIfSectionExists(char* szSection)
