@@ -41,7 +41,7 @@
 **---------------------------------------------------------------------------
 */
 
-char m_szFileName[513];
+char m_szFileName[INI_READ_MAX_STR_LENGTH + 1] = { 0 };
 
 /*
 **---------------------------------------------------------------------------
@@ -54,7 +54,7 @@ bool InitIniReader(char* szFileName)
 	int nCurrChar = 0;
 	if (!szFileName) return false;
 	memset(m_szFileName, 0x00, 513);
-	while (szFileName[nCurrChar] != 0 && nCurrChar <= 512)
+	while (szFileName[nCurrChar] != 0 && nCurrChar <= INI_READ_MAX_STR_LENGTH)
 	{
 		m_szFileName[nCurrChar] = szFileName[nCurrChar];
 		nCurrChar++;
@@ -110,6 +110,6 @@ char* ReadString(char* szSection, char* szKey, const char* szDefaultValue)
 	char* szResult = new char[255];
 	memset(szResult, 0x00, 255);
 	GetPrivateProfileString(szSection, szKey,
-		szDefaultValue, szResult, 255, m_szFileName);
+		szDefaultValue, szResult, INI_READ_MAX_STR_LENGTH, m_szFileName);
 	return szResult;
 }
