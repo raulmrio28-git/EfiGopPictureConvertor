@@ -51,13 +51,13 @@ char m_szFileName[513];
 
 bool InitIniReader(char* szFileName)
 {
-	int currChar = 0;
+	int nCurrChar = 0;
 	if (!szFileName) return false;
 	memset(m_szFileName, 0x00, 513);
-	while (szFileName[currChar] != 0 && currChar <= 512)
+	while (szFileName[nCurrChar] != 0 && nCurrChar <= 512)
 	{
-		m_szFileName[currChar] = szFileName[currChar];
-		currChar++;
+		m_szFileName[nCurrChar] = szFileName[nCurrChar];
+		nCurrChar++;
 	}
 	return true;
 }
