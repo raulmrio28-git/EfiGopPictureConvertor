@@ -89,7 +89,7 @@ void EgpConverter_ReadIni(char *pszIniFilename, UEFI_GOP_CONVERT_FILEINPUTINFO *
 		char* image;
 		sprintf_s(section, "Frame%d", frameNum);
 
-		while ((image = ReadString((char*)"Images", section, "")) && strlen(image)) {
+		while ((image = ReadString((char*)"Images", section, "")) && strnlen_s(image, 512)) {
 			printf_s("Frame %d path: %s\n", frameNum, image);
 			UEFI_GOP_CONVERT_IMAGEINFO info;
 			info.pszFn = std::string(image);
