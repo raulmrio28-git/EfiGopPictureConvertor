@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 	Magick::InitializeMagick(*argv);
 	if (argc == 1)
 	{
-		printf("Failure, no INI file present");
+		printf_s("Failure, no INI file present");
 		return 1;
 	}
 	EgpConverter_ReadIni(argv[1], &tFileInput);

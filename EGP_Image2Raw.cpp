@@ -32,7 +32,7 @@ UINT8 *EgpConverter_Img2Raw(const std::string &filename, UEFI_GOP_PICTURE_BPP tB
 		img.read(filename);
 	}
 	catch (const Magick::Exception& e) {
-		printf("%s\n", e.what());
+		printf_s("%s\n", e.what());
 		return NULL;
 	}
 	img.type(Magick::TrueColorAlphaType);
