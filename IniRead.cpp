@@ -80,7 +80,7 @@ float ReadFloat(char* szSection, char* szKey, float fltDefaultValue)
 	float fltResult;
 	sprintf_s(szDefault, "%f", fltDefaultValue);
 	GetPrivateProfileString(szSection, szKey, szDefault, szResult, 255, m_szFileName);
-	fltResult = atof(szResult);
+	fltResult = strtof(szResult, NULL);
 	return fltResult;
 }
 bool ReadBoolean(char* szSection, char* szKey, bool bolDefaultValue)
