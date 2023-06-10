@@ -77,7 +77,7 @@ void EgpConverter_ReadIni(char *pszIniFilename, UEFI_GOP_CONVERT_FILEINPUTINFO *
 			ptFileInfo->bIsUsingColorForTransparency = ReadBooleanYesNo((char*)"TransparentUseColor", (char*)"Format", false);
 		else
 			ptFileInfo->bIsUsingColorForTransparency = false;
-		printf((char*)"Width: %d\nHeight: %d\nAnimated? %s\nRGB format: %d\nTransparent? %s\nRotated? %s\n",
+		printf_s((char*)"Width: %d\nHeight: %d\nAnimated? %s\nRGB format: %d\nTransparent? %s\nRotated? %s\n",
 			ptFileInfo->nWidth, ptFileInfo->nHeight, ptFileInfo->bIsAnimation ? "True" : "False",
 			ptFileInfo->tBpp, ptFileInfo->bIsTransparent ? "True" : "False", ptFileInfo->bIsRotated ? "True" : "False");
 	}
@@ -90,7 +90,7 @@ void EgpConverter_ReadIni(char *pszIniFilename, UEFI_GOP_CONVERT_FILEINPUTINFO *
 		sprintf_s(section, "Frame%d", frameNum);
 
 		while ((image = ReadString((char*)"Images", section, "")) && strlen(image)) {
-			printf("Frame %d path: %s\n", frameNum, image);
+			printf_s("Frame %d path: %s\n", frameNum, image);
 			UEFI_GOP_CONVERT_IMAGEINFO info;
 			info.pszFn = std::string(image);
 
