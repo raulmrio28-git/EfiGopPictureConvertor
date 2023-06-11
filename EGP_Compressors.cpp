@@ -33,6 +33,7 @@
   Jean-loup Gailly        Mark Adler
   jloup@gzip.org          madler@alumni.caltech.edu */
 #include <iostream>
+#include "EGP_Converter.h"
 #include "EGP_IniRead.h"
 #include "EGP_Compressors.h"
 #include "Compress.h"
@@ -708,42 +709,42 @@ UINT8 * EgpConverter_Compress(const UINT8 * pImgDataPrevious, UINT8 * pOriginalI
 {
 	if (pImgDataPrevious == nullptr || pOriginalImgData == nullptr || nSize == 0 || pnOutSize == nullptr) return nullptr;
 	auto *pCompressedData = new UINT8[nSize*2];
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_RLE)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_RLE)
 	{
 		RleCompress(pOriginalImgData, nSize, pCompressedData, pnOutSize, nBpp);
 	}
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_LZSS)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_LZSS)
 	{
 		LzssCompress(pOriginalImgData, pCompressedData, nSize, *pnOutSize);
 	}
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_PACKBITS8)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_PACKBITS8)
 	{
 		PackBitsCompress(pOriginalImgData, nSize, pCompressedData, pnOutSize, nBpp);
 	}
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_PACKBITS16)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_PACKBITS16)
 	{
 		PackBits16Compress(pOriginalImgData, nSize, pCompressedData, pnOutSize, nBpp);
 	}
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_EFICOMPRESS)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_EFICOMPRESS)
 	{
 		EfiCompress(pOriginalImgData, nSize, pCompressedData, pnOutSize);
 	}
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_RLE_AND_XOR)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_RLE_AND_XOR)
 	{
 		auto* pImgDataXor = new UINT8[nSize];
 		XorTwoImgs(pImgDataPrevious, pOriginalImgData, pImgDataXor, nSize);
 		RleCompress(pImgDataXor, nSize, pCompressedData, pnOutSize, nBpp);
 		delete[] pImgDataXor;
 	}
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_OVERLAY)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_OVERLAY)
 	{
 		OverlayCompress(pImgDataPrevious, pOriginalImgData, nSize, pCompressedData, pnOutSize, nBpp);
 	}
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_PREVREUSE)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_PREVREUSE)
 	{
 		ReuseCompress(pOriginalImgData, nSize, pCompressedData, pnOutSize, nBpp);
 	}
-	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION_ZLIB)
+	if (tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_ZLIB)
 	{
 		if (compress2(pCompressedData, (uLongf *)pnOutSize, pOriginalImgData, nSize, 9) != Z_OK)
 			return nullptr;

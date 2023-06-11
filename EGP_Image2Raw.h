@@ -1,5 +1,4 @@
 #include <Windows.h>
-#include <GraphicsLib_Private.h>
 #pragma pack(1)
 typedef struct {
 	UINT8 nRed;

@@ -1,8 +1,8 @@
 #include <iostream>
+#include "EGP_Converter.h"
 #include "EGP_IniRead.h"
 #include "EGP_Image2Raw.h"
 #include "EGP_Compressors.h"
-#include <GraphicsLib_Private.h>
 #include <Magick++.h>
 
 using namespace std;
@@ -25,7 +25,7 @@ void EgpConverter_Ini2Img(UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInput)
 	tHeader.nWidth = ptFileInput->nWidth;
 	tHeader.nHeight = ptFileInput->nHeight;
 	tHeader.tVersion = { 1, 0 };
-	tHeader.tProperties.nBpp = ptFileInput->tBpp;
+	tHeader.tProperties.nBpp = (UINT8)ptFileInput->tBpp;
 	tHeader.tProperties.bIsTransparent = ptFileInput->bIsTransparent;
 	tHeader.tProperties.bIsAnimated = ptFileInput->bIsAnimation;
 	tHeader.tProperties.bIsRotated = ptFileInput->bIsRotated;
@@ -41,7 +41,7 @@ void EgpConverter_Ini2Img(UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInput)
 		fseek(pfOutput, nCurrentOffset, SEEK_SET);
 		nSize = ptFileInput->nWidth * ptFileInput->nHeight * (EgpConverter_GetBpp(ptFileInput->tBpp) / 8);
 		tImageInfo.nSpeed = ptFileInput->vtImageInfo[i].nSpeed;
-		tImageInfo.tCompression = ptFileInput->vtImageInfo[i].nCompression;
+		tImageInfo.tCompression = (UINT8)ptFileInput->vtImageInfo[i].nCompression;
 		tImageInfo.nPaletteCount = 0;
 		pImgDataPrevious = new UINT8[nSize];
 		if (i == 0)
@@ -52,7 +52,7 @@ void EgpConverter_Ini2Img(UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInput)
 			memcpy_s((void*)pImgDataPrevious, nSize, pOriginalImgData, nSize);
 		}	
 		pOriginalImgData = EgpConverter_Img2Raw(ptFileInput->vtImageInfo[i].pszFn, ptFileInput->tBpp);
-		if (tImageInfo.tCompression == UEFI_GOP_PICTURE_COMPRESSION_UNCOMPRESSED)
+		if ((UEFI_GOP_PICTURE_COMPRESSION)tImageInfo.tCompression == UEFI_GOP_PICTURE_COMPRESSION::UEFI_GOP_PICTURE_COMPRESSION_UNCOMPRESSED)
 		{
 			pImgData = pOriginalImgData;
 			tImageInfo.nBuffSize = nSize;

@@ -1,6 +1,5 @@
 #include "IniRead.h"
 #include <vector>
-#include <GraphicsLib_Private.h>
 
 using UEFI_GOP_CONVERT_IMAGEINFO = struct {
 	std::string pszFn;
