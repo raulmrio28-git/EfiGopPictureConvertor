@@ -1,3 +1,4 @@
+/* Note: this code has been modified to fit in with DevSkim guidelines */
 /** @file
 
 Copyright (c) 2006 - 2008, Intel Corporation. All rights reserved.<BR>
@@ -415,20 +416,20 @@ Returns:
 {
   UINT32      i;
   
-  mText       = malloc (WNDSIZ * 2 + MAXMATCH);
+  mText       = new UINT8[WNDSIZ * 2 + MAXMATCH];
   for (i = 0 ; i < WNDSIZ * 2 + MAXMATCH; i ++) {
     mText[i] = 0;
   }
 
-  mLevel      = malloc ((WNDSIZ + UINT8_MAX + 1) * sizeof(*mLevel));
-  mChildCount = malloc ((WNDSIZ + UINT8_MAX + 1) * sizeof(*mChildCount));
-  mPosition   = malloc ((WNDSIZ + UINT8_MAX + 1) * sizeof(*mPosition));
-  mParent     = malloc (WNDSIZ * 2 * sizeof(*mParent));
-  mPrev       = malloc (WNDSIZ * 2 * sizeof(*mPrev));
-  mNext       = malloc ((MAX_HASH_VAL + 1) * sizeof(*mNext));
+  mLevel      = new UINT8[(WNDSIZ + UINT8_MAX + 1) * sizeof(*mLevel)];
+  mChildCount = new UINT8[(WNDSIZ + UINT8_MAX + 1) * sizeof(*mChildCount)];
+  mPosition   = new NODE[(WNDSIZ + UINT8_MAX + 1) * sizeof(*mPosition)];
+  mParent     = new NODE[WNDSIZ * 2 * sizeof(*mParent)];
+  mPrev       = new NODE[WNDSIZ * 2 * sizeof(*mPrev)];
+  mNext       = new NODE[(MAX_HASH_VAL + 1) * sizeof(*mNext)];
   
   mBufSiz = 16 * 1024U;
-  while ((mBuf = malloc(mBufSiz)) == NULL) {
+  while ((mBuf = new UINT8[mBufSiz]) == NULL) {
     mBufSiz = (mBufSiz / 10U) * 9U;
     if (mBufSiz < 4 * 1024U) {
       return EFI_OUT_OF_RESOURCES;
@@ -840,7 +841,7 @@ Returns: (VOID)
 
   mRemainder--;
   if (++mPos == WNDSIZ * 2) {
-    memmove(&mText[0], &mText[WNDSIZ], WNDSIZ + MAXMATCH);
+    memmove_s(&mText[0], WNDSIZ + MAXMATCH, &mText[WNDSIZ], WNDSIZ + MAXMATCH);
     n = FreadCrc(&mText[WNDSIZ + MAXMATCH], WNDSIZ);
     mRemainder += n;
     mPos = WNDSIZ;
