@@ -33,9 +33,6 @@
     <ClCompile Include="EGP_Compressors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EfiCompress.c">
-      <Filter>Source Files\Other compressors</Filter>
-    </ClCompile>
     <ClCompile Include="zlib\adler32.c">
       <Filter>Source Files\Other compressors</Filter>
     </ClCompile>
@@ -67,6 +64,9 @@
       <Filter>Source Files\Other compressors</Filter>
     </ClCompile>
     <ClCompile Include="zlib\zutil.c">
+      <Filter>Source Files\Other compressors</Filter>
+    </ClCompile>
+    <ClCompile Include="EfiCompress.cpp">
       <Filter>Source Files\Other compressors</Filter>
     </ClCompile>
   </ItemGroup>

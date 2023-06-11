@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EfiCompress.c" />
+    <ClCompile Include="EfiCompress.cpp" />
     <ClCompile Include="EGP_Compressors.cpp" />
     <ClCompile Include="EGP_Converter.cpp" />
     <ClCompile Include="EGP_Image2Raw.cpp" />

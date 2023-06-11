@@ -471,6 +471,7 @@ void ReuseCompress(const UINT8 *source, UINT32 length, UINT8 *dest, UINT32 *outs
 	UINT32 ch;
 	const UINT8 *instart;
 	const UINT8 *inptr;
+	UINT8 *outptr = dest;
 	const UINT8 *inscan;
 	UINT16 *map;
 	UINT8 *dat;
@@ -531,68 +532,21 @@ void ReuseCompress(const UINT8 *source, UINT32 length, UINT8 *dest, UINT32 *outs
 			if (nCopCount == 0x7Fff) {
 				nCopCount = 0;
 			}
-			memcpy(dat + datlength, inptr, nBpp / 8);
+			WriteNBytes(dat + datlength, ReadNBytes(inptr, nBpp/8), nBpp/8);
 			datlength += nBpp / 8;
 			inptr += nBpp / 8;
 			length -= nBpp / 8;
 		}
 	} while (length);
 
-	memcpy(dest, &maplength, 4);
-	memcpy(dest + 2, map, maplength << 1);
+	WriteNBytes(outptr, maplength<<1, sizeof(UINT32));
+	outptr += sizeof(UINT32);
+	memcpy_s(outptr, maplength << 1, map, maplength);
+	outptr += maplength << 1;
 	delete[] map;
-	memcpy(dest + 2 + maplength, dat, datlength);
+	memcpy_s(outptr, datlength, dat, datlength);
 	delete[] dat;
 	*outsize = 4 + (maplength << 1) + datlength;
-}
-
-UINT32 MLZ16_Decompress(const UINT16 *source, UINT16 *dest)
-{
-	const UINT16 *map;
-	const UINT16 *dat;
-	UINT32 maplength;
-	UINT32 outlength = 0;
-	UINT16 ch;
-	UINT16 count;
-	UINT16 offset;
-	UINT16 currcount = 0;
-	BOOLEAN is_repeat = false;
-
-	// Get 4-byte map length and set map and data buffer poUINT32ers
-	maplength = *source + (*(source + 1) << 16);
-	map = source + 2;
-	dat = source + 2 + maplength;
-
-	// Decompress map buffer
-	while (maplength--) {
-		ch = *map++;
-		is_repeat = ch & 0x1;   // Check if repeat (1) or non-repeat (0)
-
-		if (is_repeat == true) {  // If repeat
-
-			// Next 11 bits is offset, following 4 bits is length. 
-			// Copy length bytes from offset bytes back. Increment output length.
-			offset = (ch >> 1) & 0x7ff;
-			count = (ch >> 12) & 0xf;
-			memcpy(dest + outlength, dest + outlength - offset, count << 1);
-			outlength += count;
-		}
-		else {  // If non-repeat
-
-		 // Next 15 bits is count. Read count bytes from data buffer. Increment output length.
-			count = (ch >> 1);
-			while (currcount < count)
-			{
-				dest[outlength + currcount] = *dat++;
-				currcount++;
-			}
-				
-			outlength += count;
-		}
-	}
-
-	// Return total decompressed length
-	return outlength << 1;
 }
 
 void InitTree(void)  /* initialize trees */
