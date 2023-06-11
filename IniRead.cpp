@@ -101,7 +101,7 @@ bool ReadBooleanYesNo(const char* szSection, const char* szKey, bool bolDefaultV
 }
 char* ReadString(const char* szSection, const char* szKey, const char* szDefaultValue)
 {
-	char* szResult = new char[INI_READ_MAX_STR_LENGTH+1];
+	auto* szResult = new char[INI_READ_MAX_STR_LENGTH+1];
 	memset(szResult, 0x00, INI_READ_MAX_STR_LENGTH);
 	GetPrivateProfileString(szSection, szKey,
 		szDefaultValue, szResult, INI_READ_MAX_STR_LENGTH, m_szFileName.c_str());

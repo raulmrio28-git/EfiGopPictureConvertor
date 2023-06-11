@@ -114,7 +114,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(EDK_PATH)\BaseTools\Source\C\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\MyBitmapGraphicsLib;C:\Program Files\ImageMagick-7.1.1-Q8\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(EDK_PATH)\BaseTools\Source\C\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\EfiGopPictureLib;C:\Program Files\ImageMagick-7.1.1-Q8\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\ImageMagick-7.1.1-Q8\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -122,7 +122,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\MyBitmapGraphicsLib;C:\Program Files\ImageMagick-7.1.1-Q8\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\EfiGopPictureLib;C:\Program Files\ImageMagick-7.1.1-Q8\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\ImageMagick-7.1.1-Q8\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
