@@ -36,8 +36,10 @@ UINT8 *EgpConverter_Img2Raw(const std::string &filename, UEFI_GOP_PICTURE_BPP tB
 		return NULL;
 	}
 	img.type(Magick::TrueColorAlphaType);
+	if(img.columns() <= 0 || img.rows() <= 0) return NULL;
 	const Magick::Quantum *pixels = img.getConstPixels(0, 0, img.columns(), img.rows());
 	pOut = (UINT8*)malloc(img.columns() * img.rows()* EgpConverter_GetBpp(tBpp));
+	if (pOut == NULL) return NULL;
 	for (unsigned i = 0; i < img.rows(); i++) {
 		for (unsigned j = 0; j < img.columns(); j++) {
 			nCurrPixel = img.columns() * i + j;
