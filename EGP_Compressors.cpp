@@ -541,7 +541,7 @@ void ReuseCompress(const UINT8 *source, UINT32 length, UINT8 *dest, UINT32 *outs
 
 	WriteNBytes(outptr, maplength<<1, sizeof(UINT32));
 	outptr += sizeof(UINT32);
-	memcpy_s(outptr, maplength << 1, map, maplength);
+	memcpy_s(outptr, maplength << 1, map, maplength << 1);
 	outptr += maplength << 1;
 	delete[] map;
 	memcpy_s(outptr, datlength, dat, datlength);
