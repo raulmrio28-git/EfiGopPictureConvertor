@@ -27,66 +27,66 @@ UINT8 *EgpConverter_Img2Raw(const std::string &filename, UEFI_GOP_PICTURE_BPP tB
 	Magick::Image img;
 	UEFI_GOP_CONVERT_RGBA tPixel;
 	UINT32 size;
-	UINT8* pOut;
-	unsigned int nCurrPixel = 0;
+	UINT32 nCurrPixel = 0;
 	try {
 		img.read(filename);
 	}
 	catch (const Magick::Exception& e) {
 		printf_s("%s\n", e.what());
-		return NULL;
+		return nullptr;
 	}
 	img.type(Magick::TrueColorAlphaType);
-	if(img.columns() <= 0 || img.rows() <= 0) return NULL;
-	size = img.columns() * img.rows() * EgpConverter_GetBpp(tBpp);
+	if(img.columns() <= 0 || img.rows() <= 0) return nullptr;
+	size = (UINT32)(img.columns() * img.rows() * EgpConverter_GetBpp(tBpp));
 	const Magick::Quantum *pixels = img.getConstPixels(0, 0, img.columns(), img.rows());
-	pOut = (UINT8*)malloc(size);
-	if (pOut == NULL) return NULL;
-	for (unsigned i = 0; i < img.rows(); i++) {
-		for (unsigned j = 0; j < img.columns(); j++) {
-			nCurrPixel = img.columns() * i + j;
+	auto pOut = new UINT8[size];
+	if (pOut == nullptr) return nullptr;
+	for (UINT32 i = 0; i < img.rows(); i++) {
+		for (UINT32 j = 0; j < img.columns(); j++) {
+			nCurrPixel = (UINT32)(img.columns() * i + j);
 			tPixel.nRed = *pixels++;
 			tPixel.nGreen = *pixels++;
 			tPixel.nBlue = *pixels++;
 			tPixel.nAlpha = *pixels++;
 			switch (tBpp) {
 			case UEFI_GOP_PICTURE_BPP_8RGB332:
-				pOut[nCurrPixel] = ((tPixel.nBlue >> 6) & 0x3) | ((tPixel.nGreen >> 5) & 0x7) << 2 | ((tPixel.nRed >> 5) & 0x7) << 5;
+				pOut[nCurrPixel] = (UINT8)((tPixel.nBlue >> 6) & 0x3) | (UINT8)((tPixel.nGreen >> 5) & 0x7) << 2 | (UINT8)((tPixel.nRed >> 5) & 0x7) << 5;
 				break;
 			case UEFI_GOP_PICTURE_BPP_8RGBA3328:
-				pOut[(nCurrPixel * 2)] = ((tPixel.nBlue >> 6) & 0x3) | ((tPixel.nGreen >> 5) & 0x7) << 2 | ((tPixel.nRed >> 5) & 0x7) << 5;
+				pOut[(nCurrPixel * 2)] = (UINT8)((tPixel.nBlue >> 6) & 0x3) | (UINT8)((tPixel.nGreen >> 5) & 0x7) << 2 | (UINT8)((tPixel.nRed >> 5) & 0x7) << 5;
 				pOut[(nCurrPixel * 2) + 1] = tPixel.nAlpha;
 				break;
 			case UEFI_GOP_PICTURE_BPP_16RGB444:
-				pOut[(nCurrPixel * 2)] = ((tPixel.nBlue >> 4) & 0xf) | ((tPixel.nGreen >> 4) & 0xf) << 4;
+				pOut[(nCurrPixel * 2)] = (UINT8)((tPixel.nBlue >> 4) & 0xf) | (UINT8)((tPixel.nGreen >> 4) & 0xf) << 4;
 				pOut[(nCurrPixel * 2) + 1] = ((tPixel.nRed >> 4) & 0xf);
 				break;
 			case UEFI_GOP_PICTURE_BPP_16RGBA4444 :
-				pOut[(nCurrPixel * 2)] = ((tPixel.nBlue >> 4) & 0xf) | ((tPixel.nGreen >> 4) & 0xf) << 4;
-				pOut[(nCurrPixel * 2) + 1] = ((tPixel.nRed >> 4) & 0xf) || ((tPixel.nAlpha >>4) & 0xf) << 4;
+				pOut[(nCurrPixel * 2)] = (UINT8)((tPixel.nBlue >> 4) & 0xf) | (UINT8)((tPixel.nGreen >> 4) & 0xf) << 4;
+				pOut[(nCurrPixel * 2) + 1] = (UINT8)((tPixel.nRed >> 4) & 0xf) || (UINT8)((tPixel.nAlpha >>4) & 0xf) << 4;
 				break;
 			case UEFI_GOP_PICTURE_BPP_16RGB555:
-				pOut[(nCurrPixel * 2)] = ((tPixel.nBlue >> 3) & 0x1f) | ((tPixel.nGreen >> 3) & 0x7) << 5;
-				pOut[(nCurrPixel * 2) + 1] = (((tPixel.nGreen >> 3) & 0x18) >> 3) | ((tPixel.nRed >> 3) & 0x1f) << 2;
+				pOut[(nCurrPixel * 2)] = (UINT8)((tPixel.nBlue >> 3) & 0x1f) | (UINT8)((tPixel.nGreen >> 3) & 0x7) << 5;
+				pOut[(nCurrPixel * 2) + 1] = (UINT8)(((tPixel.nGreen >> 3) & 0x18) >> 3) | (UINT8)((tPixel.nRed >> 3) & 0x1f) << 2;
 				break;
 			case UEFI_GOP_PICTURE_BPP_16RGBA5551:
-				pOut[(nCurrPixel * 2)] = ((tPixel.nBlue >> 3) & 0x1f) | ((tPixel.nGreen >> 3) & 0x7) << 5;
-				pOut[(nCurrPixel * 2) + 1] = (((tPixel.nGreen >> 3) & 0x18) >> 3) | ((tPixel.nRed >> 3) & 0x1f) << 2 | ((tPixel.nAlpha >> 7)& 0x1) << 7;
+				pOut[(nCurrPixel * 2)] = (UINT8)((tPixel.nBlue >> 3) & 0x1f) | (UINT8)((tPixel.nGreen >> 3) & 0x7) << 5;
+				pOut[(nCurrPixel * 2) + 1] = (UINT8)(((tPixel.nGreen >> 3) & 0x18) >> 3) | (UINT8)((tPixel.nRed >> 3) & 0x1f) << 2 | (UINT8)((tPixel.nAlpha >> 7)& 0x1) << 7;
 				break;
 			case UEFI_GOP_PICTURE_BPP_16RGB565:
-				pOut[(nCurrPixel * 2)] = ((tPixel.nBlue >> 3) & 0x1f) | ((tPixel.nGreen >> 2) & 0x7) << 5;
-				pOut[(nCurrPixel * 2) + 1] = (((tPixel.nGreen >> 2) & 0x38) >> 3) | ((tPixel.nRed >> 3) & 0x1f) << 3;
+				pOut[(nCurrPixel * 2)] = (UINT8)((tPixel.nBlue >> 3) & 0x1f) | (UINT8)((tPixel.nGreen >> 2) & 0x7) << 5;
+				pOut[(nCurrPixel * 2) + 1] = (UINT8)(((tPixel.nGreen >> 2) & 0x38) >> 3) | (UINT8)((tPixel.nRed >> 3) & 0x1f) << 3;
 				break;
 			case UEFI_GOP_PICTURE_BPP_18RGB666:
-				pOut[(nCurrPixel * 3)] = ((tPixel.nBlue >> 2) & 0x3f) | ((tPixel.nGreen >> 2) & 0x3) << 6;
-				pOut[(nCurrPixel * 3)+1] = (((tPixel.nGreen >> 2) & 0x3c) >> 2) | ((tPixel.nRed >> 2) & 0xf) << 4;
+				pOut[(nCurrPixel * 3)] = (UINT8)((tPixel.nBlue >> 2) & 0x3f) | (UINT8)((tPixel.nGreen >> 2) & 0x3) << 6;
+				pOut[(nCurrPixel * 3)+1] = (UINT8)(((tPixel.nGreen >> 2) & 0x3c) >> 2) | (UINT8)((tPixel.nRed >> 2) & 0xf) << 4;
 				pOut[(nCurrPixel * 3) + 2] = (((tPixel.nRed >> 2) & 0x30) >> 4);
 				break;
 			case UEFI_GOP_PICTURE_BPP_18RGBA6666:
-				pOut[(nCurrPixel * 3)] = ((tPixel.nBlue >> 2) & 0x3f) | ((tPixel.nGreen >> 2) & 0x3) << 6;
-				pOut[(nCurrPixel * 3) + 1] = (((tPixel.nGreen >> 2) & 0x3c) >> 2) | ((tPixel.nRed >> 2) & 0xf) << 4;
+				pOut[(nCurrPixel * 3)] = (UINT8)((tPixel.nBlue >> 2) & 0x3f) | (UINT8)((tPixel.nGreen >> 2) & 0x3) << 6;
+				pOut[(nCurrPixel * 3) + 1] = (UINT8)(((tPixel.nGreen >> 2) & 0x3c) >> 2) | (UINT8)((tPixel.nRed >> 2) & 0xf) << 4;
 				pOut[(nCurrPixel * 3) + 2] = (((tPixel.nRed >> 2) & 0x30) >> 4) || ((tPixel.nAlpha >> 2) & 0x3f) << 2;
 				break;
+			default:
 			case UEFI_GOP_PICTURE_BPP_24RGB888:
 				pOut[(nCurrPixel * 3) + 2] = tPixel.nRed;
 				pOut[(nCurrPixel * 3) + 1] = tPixel.nGreen;

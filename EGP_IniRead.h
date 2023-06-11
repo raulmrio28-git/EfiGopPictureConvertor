@@ -2,13 +2,13 @@
 #include <vector>
 #include <GraphicsLib_Private.h>
 
-typedef struct {
+using UEFI_GOP_CONVERT_IMAGEINFO = struct {
 	std::string pszFn;
 	UEFI_GOP_PICTURE_COMPRESSION nCompression;
 	UINT16 nSpeed;
-} UEFI_GOP_CONVERT_IMAGEINFO;
+};
 
-typedef struct {
+using UEFI_GOP_CONVERT_FILEINPUTINFO = struct {
 	UINT8* pszFn;
 	UINT32 nWidth;
 	UINT32 nHeight;
@@ -18,6 +18,6 @@ typedef struct {
 	BOOLEAN bIsRotated;
 	BOOLEAN bIsUsingColorForTransparency;
 	std::vector<UEFI_GOP_CONVERT_IMAGEINFO> vtImageInfo;
-} UEFI_GOP_CONVERT_FILEINPUTINFO;
+};
 
-void EgpConverter_ReadIni(char *pszIniFilename, UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInfo);
+void EgpConverter_ReadIni(const char *pszIniFilename, UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInfo);

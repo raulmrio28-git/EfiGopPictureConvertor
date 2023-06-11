@@ -1,0 +1,1 @@
+UINT8 * EgpConverter_Compress(const UINT8 * pImgDataPrevious, UINT8 * pOriginalImgData, UINT32 nSize, UINT32* pnOutSize, UEFI_GOP_PICTURE_COMPRESSION tCompression, UINT8 nBpp);

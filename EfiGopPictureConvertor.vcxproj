@@ -19,15 +19,42 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EfiCompress.c" />
+    <ClCompile Include="EGP_Compressors.cpp" />
     <ClCompile Include="EGP_Converter.cpp" />
     <ClCompile Include="EGP_Image2Raw.cpp" />
     <ClCompile Include="EGP_IniRead.cpp" />
     <ClCompile Include="IniRead.cpp" />
+    <ClCompile Include="zlib\adler32.c" />
+    <ClCompile Include="zlib\compress.c" />
+    <ClCompile Include="zlib\crc32.c" />
+    <ClCompile Include="zlib\deflate.c" />
+    <ClCompile Include="zlib\infback.c" />
+    <ClCompile Include="zlib\inffast.c" />
+    <ClCompile Include="zlib\inflate.c" />
+    <ClCompile Include="zlib\inftrees.c" />
+    <ClCompile Include="zlib\trees.c" />
+    <ClCompile Include="zlib\uncompr.c" />
+    <ClCompile Include="zlib\zutil.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommonLib.h" />
+    <ClInclude Include="Compress.h" />
+    <ClInclude Include="EGP_Compressors.h" />
     <ClInclude Include="EGP_Image2Raw.h" />
     <ClInclude Include="EGP_IniRead.h" />
     <ClInclude Include="IniRead.h" />
+    <ClInclude Include="zlib\crc32.h" />
+    <ClInclude Include="zlib\deflate.h" />
+    <ClInclude Include="zlib\gzguts.h" />
+    <ClInclude Include="zlib\inffast.h" />
+    <ClInclude Include="zlib\inffixed.h" />
+    <ClInclude Include="zlib\inflate.h" />
+    <ClInclude Include="zlib\inftrees.h" />
+    <ClInclude Include="zlib\trees.h" />
+    <ClInclude Include="zlib\zconf.h" />
+    <ClInclude Include="zlib\zlib.h" />
+    <ClInclude Include="zlib\zutil.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -87,7 +114,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\MyBitmapGraphicsLib;C:\Program Files\ImageMagick-7.1.1-Q8\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(EDK_PATH)\BaseTools\Source\C\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\MyBitmapGraphicsLib;C:\Program Files\ImageMagick-7.1.1-Q8\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\ImageMagick-7.1.1-Q8\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

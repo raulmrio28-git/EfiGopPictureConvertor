@@ -1,9 +1,10 @@
 #include <iostream>
+#include <string>
 #include "EGP_IniRead.h"
 
-UEFI_GOP_PICTURE_COMPRESSION GetCompressionType(char* compression) {
+UEFI_GOP_PICTURE_COMPRESSION GetCompressionType(const char* compression) {
 	if (strcmp(compression, "NoCompress") == 0 || strcmp(compression, "Uncompressed") == 0)
-		return UEFT_GOP_PICTURE_COMPRESSION_UNCOMPRESSED;
+		return UEFI_GOP_PICTURE_COMPRESSION_UNCOMPRESSED;
 	else if (strcmp(compression, "RLE") == 0 || strcmp(compression, "RunLengthEncoding") == 0)
 		return UEFI_GOP_PICTURE_COMPRESSION_RLE;
 	else if (strcmp(compression, "LZSS") == 0)
@@ -24,7 +25,7 @@ UEFI_GOP_PICTURE_COMPRESSION GetCompressionType(char* compression) {
 		return UEFI_GOP_PICTURE_COMPRESSION_ZLIB;
 }
 
-UEFI_GOP_PICTURE_BPP GetBppType(char* rgbFormat) {
+UEFI_GOP_PICTURE_BPP GetBppType(const char* rgbFormat) {
 	if (strcmp(rgbFormat, "1") == 0)
 		return UEFI_GOP_PICTURE_BPP_1P;
 	if (strcmp(rgbFormat, "1BW") == 0 || strcmp(rgbFormat, "Monochrome") == 0)
@@ -59,49 +60,49 @@ UEFI_GOP_PICTURE_BPP GetBppType(char* rgbFormat) {
 		return UEFI_GOP_PICTURE_BPP_24RGBA8888;
 }
 
-void EgpConverter_ReadIni(char *pszIniFilename, UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInfo)
+void EgpConverter_ReadIni(const char *pszIniFilename, UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInfo)
 {
 	/* Initialize INI reader... */
 	InitIniReader(pszIniFilename);
 
 	// Check for [Output] section
-	if (CheckIfSectionExists((char*)"Output")) {
-		ptFileInfo->pszFn = (UINT8*)ReadString((char*)"Output", (char*)"File", "");
-		ptFileInfo->nWidth = ReadInteger((char*)"Output", (char*)"Width", 0);
-		ptFileInfo->nHeight = ReadInteger((char*)"Output", (char*)"Height", 0);
-		ptFileInfo->bIsAnimation = ReadBooleanYesNo((char*)"Output", (char*)"IsAnimation", 0);
-		ptFileInfo->tBpp = GetBppType(ReadString((char*)"Output", (char*)"RGBFormat", ""));
-		ptFileInfo->bIsTransparent = ReadBooleanYesNo((char*)"Transparent", (char*)"Format", false);
-		ptFileInfo->bIsRotated = ReadBooleanYesNo((char*)"IsRotated", (char*)"Format", false);
+	if (CheckIfSectionExists("Output")) {
+		ptFileInfo->pszFn = (UINT8*)ReadString("Output", "File", "");
+		ptFileInfo->nWidth = ReadInteger("Output", "Width", 0);
+		ptFileInfo->nHeight = ReadInteger("Output", "Height", 0);
+		ptFileInfo->bIsAnimation = ReadBooleanYesNo("Output", "IsAnimation", 0);
+		ptFileInfo->tBpp = GetBppType(ReadString("Output", "RGBFormat", ""));
+		ptFileInfo->bIsTransparent = ReadBooleanYesNo("Transparent", "Format", false);
+		ptFileInfo->bIsRotated = ReadBooleanYesNo("IsRotated", "Format", false);
 		if (ptFileInfo->bIsTransparent == true)
-			ptFileInfo->bIsUsingColorForTransparency = ReadBooleanYesNo((char*)"TransparentUseColor", (char*)"Format", false);
+			ptFileInfo->bIsUsingColorForTransparency = ReadBooleanYesNo("TransparentUseColor", "Format", false);
 		else
 			ptFileInfo->bIsUsingColorForTransparency = false;
-		printf_s((char*)"Width: %d\nHeight: %d\nAnimated? %s\nRGB format: %d\nTransparent? %s\nRotated? %s\n",
+		printf_s("Width: %d\nHeight: %d\nAnimated? %s\nRGB format: %d\nTransparent? %s\nRotated? %s\n",
 			ptFileInfo->nWidth, ptFileInfo->nHeight, ptFileInfo->bIsAnimation ? "True" : "False",
 			ptFileInfo->tBpp, ptFileInfo->bIsTransparent ? "True" : "False", ptFileInfo->bIsRotated ? "True" : "False");
 	}
 
 	// Check for [Images] section
-	if (CheckIfSectionExists((char*)"Images")) {
-		int frameNum = 1;
-		char section[20];
+	if (CheckIfSectionExists("Images")) {
+		UINT32 frameNum = 1;
+		std::string section;
 		char* image;
-		sprintf_s(section, "Frame%d", frameNum);
+		section = "Frame" + std::to_string(frameNum);
 
-		while ((image = ReadString((char*)"Images", section, "")) && strnlen_s(image, INI_READ_MAX_STR_LENGTH)) {
+		while ((image = ReadString("Images", section.c_str(), "")) && strnlen_s(image, INI_READ_MAX_STR_LENGTH)) {
 			printf_s("Frame %d path: %s\n", frameNum, image);
 			UEFI_GOP_CONVERT_IMAGEINFO info;
 			info.pszFn = std::string(image);
 
-			if (CheckIfSectionExists(section)) {
-				info.nCompression = GetCompressionType(ReadString(section, (char*)"Compression", ""));
-				info.nSpeed = ReadInteger(section, (char*)"Speed", 0);
+			if (CheckIfSectionExists(section.c_str())) {
+				info.nCompression = GetCompressionType(ReadString(section.c_str(), "Compression", ""));
+				info.nSpeed = ReadInteger(section.c_str(), "Speed", 0);
 			}
 
 			ptFileInfo->vtImageInfo.push_back(info);
 			frameNum++;
-			sprintf_s(section, "Frame%d", frameNum);
+			section = "Frame" + std::to_string(frameNum);
 		}
 	}
 }

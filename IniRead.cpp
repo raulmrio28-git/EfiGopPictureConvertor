@@ -37,79 +37,73 @@
 
 /*
 **---------------------------------------------------------------------------
-**  Internal variables
+**  UINT32ernal variables
 **---------------------------------------------------------------------------
 */
 
-char m_szFileName[INI_READ_MAX_STR_LENGTH + 1] = { 0 };
+std::string m_szFileName;
 
 /*
 **---------------------------------------------------------------------------
-**  Function(internal use only) Declarations
+**  Function(UINT32ernal use only) Declarations
 **---------------------------------------------------------------------------
 */
 
-bool InitIniReader(char* szFileName)
+bool InitIniReader(const char* szFileName)
 {
-	int nCurrChar = 0;
 	if (!szFileName) return false;
-	memset(m_szFileName, 0x00, 513);
-	while (szFileName[nCurrChar] != 0 && nCurrChar <= INI_READ_MAX_STR_LENGTH)
-	{
-		m_szFileName[nCurrChar] = szFileName[nCurrChar];
-		nCurrChar++;
-	}
+	m_szFileName = std::string(szFileName);
 	return true;
 }
-bool CheckIfSectionExists(char* szSection)
+bool CheckIfSectionExists(const char* szSection)
 {
-	if (GetPrivateProfileSection(szSection, NULL, 0, m_szFileName) == 0)
+	if (GetPrivateProfileSection(szSection, nullptr, 0, m_szFileName.c_str()) == 0)
 		return true;
 	else
 		return false;
 }
-int ReadInteger(char* szSection, char* szKey, int iDefaultValue)
+UINT32 ReadInteger(const char* szSection, const char* szKey, UINT32 iDefaultValue)
 {
-	int iResult = GetPrivateProfileInt(szSection, szKey, iDefaultValue, m_szFileName);
+	UINT32 iResult = GetPrivateProfileInt(szSection, szKey, iDefaultValue, m_szFileName.c_str());
 	return iResult;
 }
-float ReadFloat(char* szSection, char* szKey, float fltDefaultValue)
+float ReadFloat(const char* szSection, const char* szKey, float fltDefaultValue)
 {
 	char szResult[255];
 	char szDefault[255];
 	float fltResult;
 	sprintf_s(szDefault, "%f", fltDefaultValue);
-	GetPrivateProfileString(szSection, szKey, szDefault, szResult, 255, m_szFileName);
-	fltResult = strtof(szResult, NULL);
+	GetPrivateProfileString(szSection, szKey, szDefault, szResult, 255, m_szFileName.c_str());
+	fltResult = strtof(szResult, nullptr);
 	return fltResult;
 }
-bool ReadBoolean(char* szSection, char* szKey, bool bolDefaultValue)
+bool ReadBoolean(const char* szSection, const char* szKey, bool bolDefaultValue)
 {
 	char szResult[255];
 	char szDefault[255];
 	bool bolResult;
 	sprintf_s(szDefault, "%s", bolDefaultValue ? "True" : "False");
-	GetPrivateProfileString(szSection, szKey, szDefault, szResult, 255, m_szFileName);
+	GetPrivateProfileString(szSection, szKey, szDefault, szResult, 255, m_szFileName.c_str());
 	bolResult = (strcmp(szResult, "True") == 0 ||
 		strcmp(szResult, "true") == 0) ? true : false;
 	return bolResult;
 }
-bool ReadBooleanYesNo(char* szSection, char* szKey, bool bolDefaultValue)
+bool ReadBooleanYesNo(const char* szSection, const char* szKey, bool bolDefaultValue)
 {
 	char szResult[255];
 	char szDefault[255];
 	bool bolResult;
 	sprintf_s(szDefault, "%s", bolDefaultValue ? "Yes" : "No");
-	GetPrivateProfileString(szSection, szKey, szDefault, szResult, 255, m_szFileName);
+	GetPrivateProfileString(szSection, szKey, szDefault, szResult, 255, m_szFileName.c_str());
 	bolResult = (strcmp(szResult, "Yes") == 0 ||
 		strcmp(szResult, "yes") == 0) ? true : false;
 	return bolResult;
 }
-char* ReadString(char* szSection, char* szKey, const char* szDefaultValue)
+char* ReadString(const char* szSection, const char* szKey, const char* szDefaultValue)
 {
-	char* szResult = new char[255];
-	memset(szResult, 0x00, 255);
+	char* szResult = new char[INI_READ_MAX_STR_LENGTH+1];
+	memset(szResult, 0x00, INI_READ_MAX_STR_LENGTH);
 	GetPrivateProfileString(szSection, szKey,
-		szDefaultValue, szResult, INI_READ_MAX_STR_LENGTH, m_szFileName);
+		szDefaultValue, szResult, INI_READ_MAX_STR_LENGTH, m_szFileName.c_str());
 	return szResult;
 }

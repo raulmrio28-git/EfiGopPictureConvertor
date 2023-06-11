@@ -1,6 +1,7 @@
 #include <iostream>
 #include "EGP_IniRead.h"
 #include "EGP_Image2Raw.h"
+#include "EGP_Compressors.h"
 #include <GraphicsLib_Private.h>
 #include <Magick++.h>
 
@@ -10,9 +11,12 @@ void EgpConverter_Ini2Img(UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInput)
 {
 	FILE* pfOutput;
 	UEFI_GOP_PICTURE_HEADER tHeader;
-	UINT8* pImgData;
+	const UINT8* pImgData = nullptr;
+	const UINT8* pImgDataPrevious = nullptr; /* overlay */
+	UINT8* pOriginalImgData = nullptr;
 	UINT32 nCurrentOffset;
 	UINT32 nSize;
+	UINT32 nCompSize;
 	fopen_s(&pfOutput, (char*)ptFileInput->pszFn, "wb");
 	if (ptFileInput->bIsAnimation == true)
 		tHeader.dwMagic = UEFI_GOP_PICTURE_HEADER_MAGIC_ANIMATION;
@@ -26,7 +30,7 @@ void EgpConverter_Ini2Img(UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInput)
 	tHeader.tProperties.bIsAnimated = ptFileInput->bIsAnimation;
 	tHeader.tProperties.bIsRotated = ptFileInput->bIsRotated;
 	tHeader.tProperties.bUseColorForTransparency = ptFileInput->bIsUsingColorForTransparency;
-	tHeader.nNumFrames = ptFileInput->vtImageInfo.size();
+	tHeader.nNumFrames = (UINT16)ptFileInput->vtImageInfo.size();
 	fwrite(&tHeader, sizeof(tHeader), 1, pfOutput);
 	fseek(pfOutput, sizeof(UINT32)*tHeader.nNumFrames, SEEK_CUR); /* set offset by frames * 4 */
 	for (UINT16 i = 0; i < tHeader.nNumFrames; i++) {
@@ -35,20 +39,36 @@ void EgpConverter_Ini2Img(UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInput)
 		fseek(pfOutput, sizeof(UEFI_GOP_PICTURE_HEADER) + (i * 4), SEEK_SET);
 		fwrite(&nCurrentOffset, sizeof(nCurrentOffset), 1, pfOutput);
 		fseek(pfOutput, nCurrentOffset, SEEK_SET);
-		pImgData = EgpConverter_Img2Raw(ptFileInput->vtImageInfo[i].pszFn, ptFileInput->tBpp);
-		nSize = ptFileInput->nWidth * ptFileInput->nHeight * (EgpConverter_GetBpp(ptFileInput->tBpp)/8);
-		tImageInfo.nBuffSize = nSize;
+		nSize = ptFileInput->nWidth * ptFileInput->nHeight * (EgpConverter_GetBpp(ptFileInput->tBpp) / 8);
 		tImageInfo.nSpeed = ptFileInput->vtImageInfo[i].nSpeed;
-		tImageInfo.tCompression = ptFileInput->vtImageInfo[i].nSpeed;
+		tImageInfo.tCompression = ptFileInput->vtImageInfo[i].nCompression;
 		tImageInfo.nPaletteCount = 0;
+		pImgDataPrevious = new UINT8[nSize];
+		if (tImageInfo.tCompression == UEFI_GOP_PICTURE_COMPRESSION_OVERLAY) {
+			if (i == 0)
+			{
+				memset((void*)pImgDataPrevious, 0, nSize);
+			}
+			else {
+				memcpy_s((void*)pImgDataPrevious, nSize, pOriginalImgData, nSize);
+			}
+		}	
+		pOriginalImgData = EgpConverter_Img2Raw(ptFileInput->vtImageInfo[i].pszFn, ptFileInput->tBpp);
+		if (tImageInfo.tCompression == UEFI_GOP_PICTURE_COMPRESSION_UNCOMPRESSED)
+		{
+			pImgData = pOriginalImgData;
+			tImageInfo.nBuffSize = nSize;
+		} else {
+			pImgData = EgpConverter_Compress(pImgDataPrevious, pOriginalImgData, nSize, &nCompSize, (UEFI_GOP_PICTURE_COMPRESSION)tImageInfo.tCompression, EgpConverter_GetBpp(ptFileInput->tBpp));
+			tImageInfo.nBuffSize = nCompSize;
+		}
 		fwrite(&tImageInfo, sizeof(UEFI_GOP_PICTURE_IMAGE), 1, pfOutput);
-		fwrite(pImgData, nSize, 1, pfOutput);
-		free(pImgData);
+		fwrite(pImgData, tImageInfo.nBuffSize, 1, pfOutput);
 	}
 	fclose(pfOutput);
 }
 
-int main(int argc, char *argv[]) {
+UINT32 main(UINT32 argc, char *argv[]) {
 	UEFI_GOP_CONVERT_FILEINPUTINFO tFileInput;
 	Magick::InitializeMagick(*argv);
 	if (argc == 1)

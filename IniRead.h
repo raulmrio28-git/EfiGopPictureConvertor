@@ -51,14 +51,13 @@ extern "C" {
 **---------------------------------------------------------------------------
 */
 
-bool InitIniReader(char* pszFilename);
-bool CheckIfSectionExists(char* szSection);
-int ReadInteger(char* pszSection, char* pszKey, int nDefaultValue);
-float ReadFloat(char* pszSection, char* pszKey, float fltDefaultValue);
-bool ReadBoolean(char* pszSection, char* pszKey, bool bDefaultValue);
-bool ReadBooleanYesNo(char* szSection, char* szKey, bool bolDefaultValue);
-char* ReadString(char* pszSection, char* pszKey, const char* pszDefaultValue);
-
+bool InitIniReader(const char* szFileName);
+bool CheckIfSectionExists(const char* szSection);
+UINT32 ReadInteger(const char* szSection, const char* szKey, UINT32 iDefaultValue);
+float ReadFloat(const char* szSection, const char* szKey, float fltDefaultValue);
+bool ReadBoolean(const char* szSection, const char* szKey, bool bolDefaultValue);
+bool ReadBooleanYesNo(const char* szSection, const char* szKey, bool bolDefaultValue);
+char* ReadString(const char* szSection, const char* szKey, const char* szDefaultValue);
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif
