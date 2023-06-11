@@ -108,14 +108,10 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <Import Project="$(SolutionDir)\consoleappwithedk2.default.props" />
-  <Import Project="$(SolutionDir)\MSBuild\nasm.props" />
-  <Import Project="$(SolutionDir)\consoleappwithedk2.props" />
-  <Import Project="$(SolutionDir)\MSBuild\nasm.targets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(EDK_PATH)\BaseTools\Source\C\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files\ImageMagick-7.1.1-Q8\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files\ImageMagick-7.1.1-Q8\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\ImageMagick-7.1.1-Q8\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

@@ -478,7 +478,7 @@ void ReuseCompress(const UINT8 *source, UINT32 length, UINT8 *dest, UINT32 *outs
 	const UINT8 *inscan;
 	UINT16 *map;
 	UINT8 *dat;
-	UINT16 *pWhereCopCount;
+	UINT16 *pWhereCopCount = nullptr;
 	const UINT8 *bestscan;
 	UINT32 beststring;
 	UINT32 maxstring;

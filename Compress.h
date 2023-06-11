@@ -25,26 +25,95 @@ Abstract:
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <Windows.h>
+#define WIN32_LEAN_AND_MEAN
 #include <string.h>
 #include <stdlib.h>
 
-#include "CommonLib.h"
-#include <Common/UefiBaseTypes.h>
-/*++
+//#include "CommonLib.h"
+//#include <Common/UefiBaseTypes.h>
+#define EFI_STATUS UINT32
+//
+// Modifiers to abstract standard types to aid in debug of problems
+//
+#define CONST     const
+#define STATIC    static
+#define VOID      void
 
-Routine Description:
+//
+// Modifiers for Data Types used to self document code.
+// This concept is borrowed for UEFI specification.
+//
+#ifndef IN
+//
+// Some other environments use this construct, so #ifndef to prevent
+// multiple definition.
+//
+#define IN
+#define OUT
+#define OPTIONAL
+#endif
 
-  Tiano compression routine.
+//
+// Constants. They may exist in other build structures, so #ifndef them.
+//
+#ifndef TRUE
+//
+// BugBug: UEFI specification claims 1 and 0. We are concerned about the
+//  compiler portability so we did it this way.
+//
+#define TRUE  ((BOOLEAN)(1==1))
+#endif
 
---*/
-EFI_STATUS
-TianoCompress (
-  IN      UINT8   *SrcBuffer,
-  IN      UINT32  SrcSize,
-  IN      UINT8   *DstBuffer,
-  IN OUT  UINT32  *DstSize
-  )
-;
+#ifndef FALSE
+#define FALSE ((BOOLEAN)(0==1))
+#endif
+
+#ifndef NULL
+#define NULL  ((VOID *) 0)
+#endif
+
+#define MAX_BIT  ((UINT64)((1ULL << (sizeof (INT64) * 8 - 1))))
+#define PACKED
+#define ENCODE_ERROR(a)              ((EFI_STATUS)(MAX_BIT | (a)))
+
+#define ENCODE_WARNING(a)            ((EFI_STATUS)(a))
+#define EFI_ERROR(a)              (((INT64)(EFI_STATUS)(a)) < 0)
+#define EFI_SUCCESS               0
+#define EFI_LOAD_ERROR            ENCODE_ERROR (1)
+#define EFI_INVALID_PARAMETER     ENCODE_ERROR (2)
+#define EFI_UNSUPPORTED           ENCODE_ERROR (3)
+#define EFI_BAD_BUFFER_SIZE       ENCODE_ERROR (4)
+#define EFI_BUFFER_TOO_SMALL      ENCODE_ERROR (5)
+#define EFI_NOT_READY             ENCODE_ERROR (6)
+#define EFI_DEVICE_ERROR          ENCODE_ERROR (7)
+#define EFI_WRITE_PROTECTED       ENCODE_ERROR (8)
+#define EFI_OUT_OF_RESOURCES      ENCODE_ERROR (9)
+#define EFI_VOLUME_CORRUPTED      ENCODE_ERROR (10)
+#define EFI_VOLUME_FULL           ENCODE_ERROR (11)
+#define EFI_NO_MEDIA              ENCODE_ERROR (12)
+#define EFI_MEDIA_CHANGED         ENCODE_ERROR (13)
+#define EFI_NOT_FOUND             ENCODE_ERROR (14)
+#define EFI_ACCESS_DENIED         ENCODE_ERROR (15)
+#define EFI_NO_RESPONSE           ENCODE_ERROR (16)
+#define EFI_NO_MAPPING            ENCODE_ERROR (17)
+#define EFI_TIMEOUT               ENCODE_ERROR (18)
+#define EFI_NOT_STARTED           ENCODE_ERROR (19)
+#define EFI_ALREADY_STARTED       ENCODE_ERROR (20)
+#define EFI_ABORTED               ENCODE_ERROR (21)
+#define EFI_ICMP_ERROR            ENCODE_ERROR (22)
+#define EFI_TFTP_ERROR            ENCODE_ERROR (23)
+#define EFI_PROTOCOL_ERROR        ENCODE_ERROR (24)
+#define EFI_INCOMPATIBLE_VERSION  ENCODE_ERROR (25)
+#define EFI_SECURITY_VIOLATION    ENCODE_ERROR (26)
+#define EFI_CRC_ERROR             ENCODE_ERROR (27)
+#define EFI_END_OF_MEDIA          ENCODE_ERROR (28)
+#define EFI_END_OF_FILE           ENCODE_ERROR (31)
+
+#define EFI_WARN_UNKNOWN_GLYPH    ENCODE_WARNING (1)
+#define EFI_WARN_DELETE_FAILURE   ENCODE_WARNING (2)
+#define EFI_WARN_WRITE_FAILURE    ENCODE_WARNING (3)
+#define EFI_WARN_BUFFER_TOO_SMALL ENCODE_WARNING (4)
 
 /*++
 
@@ -61,38 +130,6 @@ EfiCompress (
   IN OUT  UINT32  *DstSize
   )
 ;
-
-/*++
-
-Routine Description:
-
-  The compression routine.
-
-Arguments:
-
-  SrcBuffer   - The buffer storing the source data
-  SrcSize     - The size of source data
-  DstBuffer   - The buffer to store the compressed data
-  DstSize     - On input, the size of DstBuffer; On output,
-                the size of the actual compressed data.
-
-Returns:
-
-  EFI_BUFFER_TOO_SMALL  - The DstBuffer is too small. In this case,
-                DstSize contains the size needed.
-  EFI_SUCCESS           - Compression is successful.
-  EFI_OUT_OF_RESOURCES  - No resource to complete function.
-  EFI_INVALID_PARAMETER - Parameter supplied is wrong.
-
---*/
-typedef
-EFI_STATUS
-(*COMPRESS_FUNCTION) (
-  IN      UINT8   *SrcBuffer,
-  IN      UINT32  SrcSize,
-  IN      UINT8   *DstBuffer,
-  IN OUT  UINT32  *DstSize
-  );
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif
