@@ -44,14 +44,12 @@ void EgpConverter_Ini2Img(UEFI_GOP_CONVERT_FILEINPUTINFO *ptFileInput)
 		tImageInfo.tCompression = ptFileInput->vtImageInfo[i].nCompression;
 		tImageInfo.nPaletteCount = 0;
 		pImgDataPrevious = new UINT8[nSize];
-		if (tImageInfo.tCompression == UEFI_GOP_PICTURE_COMPRESSION_OVERLAY) {
-			if (i == 0)
-			{
-				memset((void*)pImgDataPrevious, 0, nSize);
-			}
-			else {
-				memcpy_s((void*)pImgDataPrevious, nSize, pOriginalImgData, nSize);
-			}
+		if (i == 0)
+		{
+			memset((void*)pImgDataPrevious, 0, nSize);
+		}
+		else {
+			memcpy_s((void*)pImgDataPrevious, nSize, pOriginalImgData, nSize);
 		}	
 		pOriginalImgData = EgpConverter_Img2Raw(ptFileInput->vtImageInfo[i].pszFn, ptFileInput->tBpp);
 		if (tImageInfo.tCompression == UEFI_GOP_PICTURE_COMPRESSION_UNCOMPRESSED)

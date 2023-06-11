@@ -413,6 +413,7 @@ void OverlayDecompress(const UINT8 *pInBuffer,UINT32 nInSize, UINT8 *pOutBuffer,
 }
 
 void OverlayCompress(const UINT8 *pInBuffer1, const UINT8 *pInBuffer2,UINT32 nSize, UINT8 *pOutBuffer,UINT32 *nOutSize, UINT8 nBpp) {
+	UINT8* pOutTemp = pOutBuffer+4;
 	UINT32 nInPos1 = 0;        // Position in input buffer 1
 	UINT32 nInPos2 = 0;        // Position in input buffer 2
 	UINT32 nOutPos = 4;        // Position in output buffer. It is set to 4 as first 4 bytes represent total encounters
@@ -426,7 +427,7 @@ void OverlayCompress(const UINT8 *pInBuffer1, const UINT8 *pInBuffer2,UINT32 nSi
 			// Pixels do not match, we have an overlay
 			nOffset = nInPos1;                  // Set offset to current position in buffer 1
 			nCount = 0;                        // Set overlay pixel count to 1
-
+			nCurrCount = 0;						// BUG: Some overlay pixels are not written, so reset current count to 0
 			while (nInPos1 < nSize && nInPos2 < nSize &&   // While within input buffer size
 				ReadNBytes(pInBuffer1 + nInPos1, nBpp / 8) != ReadNBytes(pInBuffer2 + nInPos2, nBpp / 8)) {
 				// Pixels do not match, increment overlay pixel count
@@ -436,17 +437,18 @@ void OverlayCompress(const UINT8 *pInBuffer1, const UINT8 *pInBuffer2,UINT32 nSi
 			}
 
 			// Write the encounter, offset, and count to the output buffer
-			WriteNBytes(pOutBuffer + nOutPos, nEncounter, 4);
+			WriteNBytes(pOutTemp, nEncounter, 4);
 			nOutPos += 4;
-			WriteNBytes(pOutBuffer + nOutPos, nOffset / (nBpp / 8), 4);
+			WriteNBytes(pOutTemp+4, nOffset / (nBpp / 8), 4);
 			nOutPos += 4;
-			WriteNBytes(pOutBuffer + nOutPos, nCount, 4);
+			WriteNBytes(pOutTemp+8, nCount, 4);
 			nOutPos += 4;
-
+			pOutTemp += 12;
 			// Write the overlay pixel data to the output buffer
 			while (nCurrCount < nCount) {
-				WriteNBytes(pOutBuffer + nOutPos, ReadNBytes(pInBuffer2 + nOffset + (nCurrCount*nBpp / 8), nBpp / 8), nBpp / 8);
+				WriteNBytes(pOutTemp, ReadNBytes(pInBuffer2 + nOffset + (nCurrCount*nBpp / 8), nBpp / 8), nBpp / 8);
 				nOutPos += nBpp / 8;
+				pOutTemp += nBpp / 8;
 				nCurrCount++;
 			}
 
